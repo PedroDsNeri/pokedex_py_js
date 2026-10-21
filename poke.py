@@ -1,7 +1,7 @@
 import requests
 from PIL import Image
 import io
-
+import os
 
 
 
@@ -11,12 +11,18 @@ def get_pokemon_data(name):
 
     url = f"{base_url}/pokemon/{name}"
 
+    print("Loading...", end="", flush=True) 
+
     response = requests.get(url)
 
+    
+
     if response.status_code == 200:
+        print("\r\033[K", end="") 
         data = response.json()
         return data
     else:
+        print("\r\033[K", end="") 
         print("Failed to get Data :( ")
         print(f"Error Code: {response.status_code}")
         return None
@@ -81,12 +87,6 @@ def draw_image_on_terminal(image_pil, max_width=60):
 
 
 
-
-
-
-
-
-
 # ID / NAME / height / weight / abilities(data['abilities'][0]['ability']['name']) / type(data['types'][0]['type']['name']) /sprite(imagem) 
 def render_pokemon(name):
     data = get_pokemon_data(name)
@@ -117,14 +117,36 @@ def render_pokemon(name):
         type_names = [item['type']['name'] for item in data['types']]
         type_names_join = ", ".join(type_names)
         print(f"TYPES: {type_names_join}")
+        print()
+
+
+
+def clean_terminal():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+
+
+def main():
+    is_running = True
+
+    while is_running:
+        pokemon_name = input("Enter a Pokemon(Q to quit): ").lower()
+
+        if pokemon_name == 'q':
+            is_running = False
+        else:
+            clean_terminal()
+            render_pokemon(pokemon_name)
+
+    clean_terminal()
+    print("BYE!!!")
+        
 
 
 
 
-
-render_pokemon("raichu")
-
-
+if "__main__" == __name__:
+    main()
 
 
 
